@@ -31,7 +31,3 @@ line-length = 88
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
