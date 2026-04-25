@@ -40,8 +40,7 @@ def _(mo):
 def _():
     import polars as pl
     import altair as alt
-    import marimo as mo
-    return alt, mo, pl
+    return alt, pl
 
 
 @app.cell

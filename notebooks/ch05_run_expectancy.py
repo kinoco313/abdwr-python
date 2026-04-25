@@ -32,14 +32,10 @@ def _(mo):
 
 @app.cell
 def _():
-    import sys
-    from pathlib import Path
-    sys.path.insert(0, str(Path("..").resolve()))
     import polars as pl
     import altair as alt
-    import marimo as mo
-    from src.baseball.utils import run_expectancy_matrix
-    return Path, alt, mo, pl, run_expectancy_matrix, sys
+    from baseball.utils import run_expectancy_matrix
+    return alt, pl, run_expectancy_matrix
 
 
 @app.cell

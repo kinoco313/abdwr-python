@@ -30,15 +30,11 @@ def _(mo):
 
 @app.cell
 def _():
-    import sys
-    from pathlib import Path
-    sys.path.insert(0, str(Path("..").resolve()))
     import polars as pl
     import altair as alt
-    import marimo as mo
     import statsmodels.formula.api as smf
-    from src.baseball.data import load_lahman_batting
-    return Path, alt, load_lahman_batting, mo, pl, smf, sys
+    from baseball.data import load_lahman_batting
+    return alt, load_lahman_batting, pl, smf
 
 
 @app.cell

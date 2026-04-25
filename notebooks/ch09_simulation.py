@@ -32,10 +32,9 @@ def _(mo):
 def _():
     import polars as pl
     import altair as alt
-    import marimo as mo
     import numpy as np
     from scipy import stats
-    return alt, mo, np, pl, stats
+    return alt, np, pl, stats
 
 
 @app.cell

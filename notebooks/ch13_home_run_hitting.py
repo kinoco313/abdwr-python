@@ -30,14 +30,10 @@ def _(mo):
 
 @app.cell
 def _():
-    import sys
-    from pathlib import Path
-    sys.path.insert(0, str(Path("..").resolve()))
     import polars as pl
     import altair as alt
-    import marimo as mo
-    from src.baseball.data import load_statcast
-    return Path, alt, load_statcast, mo, pl, sys
+    from baseball.data import load_statcast
+    return alt, load_statcast, pl
 
 
 @app.cell
