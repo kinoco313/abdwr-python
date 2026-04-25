@@ -23,6 +23,9 @@ data/*.feather
 .env
 .env.local
 
+# marimo
+notebooks/__marimo__/
+
 # OS
 .DS_Store
 *.swp
