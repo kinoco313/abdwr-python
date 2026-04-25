@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Data (fetch at runtime)
+data/*.csv
+data/*.parquet
+data/*.db
+data/*.pkl
+data/*.feather
+!data/.gitkeep
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+*.swp
+*~
