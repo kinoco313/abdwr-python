@@ -187,8 +187,8 @@ def _(linregress, mo, teams_rd):
     wpct = teams_rd["win_pct"].to_numpy()
     slope, intercept, r_value, p_value, std_err = linregress(rd, wpct)
 
-    # 1得失点差あたりの勝率増加 → 1勝(≈0.5/81試合)に必要な得失点差
-    runs_per_win = 1.0 / slope
+    # 1勝 = 162試合中1試合増 = 勝率 1/162 の増加
+    runs_per_win = (1 / 162) / slope
 
     mo.md(f"""
     ### 回帰結果
@@ -199,9 +199,9 @@ def _(linregress, mo, teams_rd):
     | 傾き（slope） | {slope:.5f} |
     | R² | {r_value**2:.4f} |
     | p値 | {p_value:.2e} |
-    | **1勝率pt に必要な得失点差** | **{runs_per_win:.1f} 点** |
+    | **1勝増やすのに必要な得失点差** | **{runs_per_win:.1f} 点** |
 
-    → 得失点差が約 **{runs_per_win:.1f}** 増えると勝率が 1.000 分増える
+    → 得失点差が約 **{runs_per_win:.1f} 点**多くなると、勝利数が1勝増える計算になる。
     """)
     return intercept, slope
 
