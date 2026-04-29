@@ -78,6 +78,12 @@ open http://localhost:2718
 - 2度書いたら `src/baseball/` に切り出す
 - ノートブックは `src/baseball` からインポートする
 
+### 7. ノートブックの記述スタイル
+- 概要セクション（冒頭の `mo.md()`）に、その章で使う略語の一覧表を入れる
+- 例：RS（Runs Scored: 得点）、RA（Runs Allowed: 失点）、RD（Run Differential: 得失点差）
+- 略語は本文中の**初出箇所**でも `略語（正式名称）` の形で併記する
+- import は各セルに分散させず、冒頭の imports セルに集約する
+
 ### 6. 章15（Shiny → marimo apps）の扱い
 原著の Shiny アプリを `mo.ui.*` 要素で再現する。
 `mo.ui.slider`, `mo.ui.dropdown`, `mo.ui.dataframe` などを活用。
