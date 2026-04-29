@@ -10,15 +10,6 @@
 ## Quick Start
 
 ```bash
-# Docker で起動
-docker compose up
-
-# ブラウザで開く
-open http://localhost:2718
-```
-
-```bash
-# ローカルで起動（uv インストール済みの場合）
 uv run marimo edit notebooks/ch01_baseball_datasets.py
 ```
 
