@@ -70,12 +70,12 @@ def _(mo):
 
 
 @app.cell
-def _(load_lahman_batting, mo):
+def _(load_lahman_batting):
     batting = load_lahman_batting()
     latest_year = batting["yearID"].max()
     season_games = batting.filter(batting["yearID"] == latest_year)["G"].max()
     qualifying_ab = int(season_games * 2.7)
-    mo.ui.dataframe(batting.tail(20), page_size=10)
+    batting.tail(20)
     return batting, latest_year, qualifying_ab
 
 
@@ -90,7 +90,6 @@ def _(batting, mo):
 
 @app.cell
 def _(batting, latest_year, mo):
-    mo.md(f"### 本塁打上位10名（{latest_year}年）")
     top_hr = (
         batting
         .filter(batting["yearID"] == latest_year)
@@ -98,7 +97,7 @@ def _(batting, latest_year, mo):
         .head(10)
         .select(["playerID", "teamID", "G", "AB", "H", "HR", "RBI", "BB", "SO"])
     )
-    mo.ui.dataframe(top_hr)
+    mo.vstack([mo.md(f"### 本塁打上位10名（{latest_year}年）"), top_hr])
     return
 
 
@@ -127,7 +126,7 @@ def _(alt, batting, pl):
 
 
 @app.cell
-def _(batting, latest_year, mo, pl, qualifying_ab):
+def _(batting, latest_year, pl, qualifying_ab):
     batting_avg = (
         batting
         .filter((batting["yearID"] == latest_year) & (batting["AB"] >= qualifying_ab))
@@ -139,7 +138,7 @@ def _(batting, latest_year, mo, pl, qualifying_ab):
         .select(["playerID", "teamID", "AB", "H", "HR", "AVG"])
     )
 
-    mo.ui.dataframe(batting_avg)
+    batting_avg
     return
 
 
@@ -165,7 +164,7 @@ def _(mo):
 
 
 @app.cell
-def _(batting, latest_year, mo, pl, qualifying_ab):
+def _(batting, latest_year, pl, qualifying_ab):
     ops_stats = (
         batting
         .filter((batting["yearID"] == latest_year) & (pl.col("AB") >= qualifying_ab))
@@ -185,7 +184,7 @@ def _(batting, latest_year, mo, pl, qualifying_ab):
         .head(20)
         .select(["playerID", "teamID", "AB", "H", "HR", "OBP", "SLG", "OPS"])
     )
-    mo.ui.dataframe(ops_stats, page_size=10)
+    ops_stats
     return (ops_stats,)
 
 
@@ -232,17 +231,12 @@ def _(mo):
 
 
 @app.cell
-def _(load_statcast, mo):
+def _(load_statcast):
     statcast = load_statcast("2023-07-04", "2023-07-04")
-    mo.ui.dataframe(
-        statcast.select([
-            "player_name", "pitch_type", "release_speed", "release_spin_rate",
-            "launch_speed", "launch_angle", "events",
-        ])
-        .drop_nulls(subset=["pitch_type"])
-        .head(20),
-        page_size=10,
-    )
+    statcast.select([
+        "player_name", "pitch_type", "release_speed", "release_spin_rate",
+        "launch_speed", "launch_angle", "events",
+    ]).drop_nulls(subset=["pitch_type"]).head(20)
     return (statcast,)
 
 

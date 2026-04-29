@@ -134,17 +134,17 @@ def _(mo, pl, teams_resid):
 
     mo.vstack([
         mo.md("### オーバーパフォーマンス上位10チーム"),
-        mo.ui.table(top_over.with_columns([
+        top_over.with_columns([
             pl.col("win_pct").round(3),
             pl.col("pyth_pct").round(3),
             pl.col("residual").round(3),
-        ])),
+        ]),
         mo.md("### アンダーパフォーマンス上位10チーム"),
-        mo.ui.table(top_under.with_columns([
+        top_under.with_columns([
             pl.col("win_pct").round(3),
             pl.col("pyth_pct").round(3),
             pl.col("residual").round(3),
-        ])),
+        ]),
     ])
     return
 
@@ -394,7 +394,7 @@ def _(mo, np, pl):
         RS/G が低い領域では同じ得点上乗せでも勝率が大きく上がる。
         RS/G が高くなるにつれてその上がり幅が小さくなるため、1勝に必要な追加点（IR/W）が増える。
         """),
-        mo.ui.table(ir_table),
+        ir_table,
     ])
     return
 
