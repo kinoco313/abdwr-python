@@ -7,6 +7,7 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
@@ -30,10 +31,12 @@ def _(mo):
 
 @app.cell
 def _():
-    import polars as pl
     import altair as alt
     import duckdb
-    from baseball.data import load_lahman_teams, DATA_DIR
+    import polars as pl
+
+    from baseball.data import DATA_DIR, load_lahman_teams
+
     return DATA_DIR, alt, duckdb, load_lahman_teams, pl
 
 

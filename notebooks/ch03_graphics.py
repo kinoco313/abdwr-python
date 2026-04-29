@@ -7,6 +7,7 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
@@ -38,20 +39,18 @@ def _(mo):
 
 @app.cell
 def _():
-    import polars as pl
     import altair as alt
+    import polars as pl
+
     from baseball.data import load_lahman_batting
+
     return alt, load_lahman_batting, pl
 
 
 @app.cell
 def _(alt, load_lahman_batting, pl):
     batting = load_lahman_batting()
-    season_hr = (
-        batting.group_by("yearID")
-        .agg(pl.col("HR").sum())
-        .sort("yearID")
-    )
+    season_hr = batting.group_by("yearID").agg(pl.col("HR").sum()).sort("yearID")
     chart_hr = (
         alt.Chart(season_hr)
         .mark_line()
@@ -67,7 +66,9 @@ def _(alt, load_lahman_batting, pl):
 
 @app.cell
 def _(mo):
-    mo.md("## TODO: 各種 ggplot2 グラフを altair で再現（散布図・ヒストグラム・ファセット等）")
+    mo.md(
+        "## TODO: 各種 ggplot2 グラフを altair で再現（散布図・ヒストグラム・ファセット等）"
+    )
     return
 
 

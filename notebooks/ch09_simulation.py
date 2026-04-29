@@ -7,6 +7,7 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
@@ -30,16 +31,19 @@ def _(mo):
 
 @app.cell
 def _():
-    import polars as pl
     import altair as alt
     import numpy as np
+    import polars as pl
     from scipy import stats
+
     return alt, np, pl, stats
 
 
 @app.cell
 def _(mo):
-    n_sim = mo.ui.slider(start=1000, stop=50000, step=1000, value=10000, label="シミュレーション回数")
+    n_sim = mo.ui.slider(
+        start=1000, stop=50000, step=1000, value=10000, label="シミュレーション回数"
+    )
     n_sim
     return (n_sim,)
 
@@ -67,7 +71,9 @@ def _(alt, mo, np, n_sim, pl):
             x=alt.X("runs:Q", bin=alt.Bin(step=1), title="得点"),
             y=alt.Y("count()", title="頻度"),
         )
-        .properties(title=f"ハーフイニング得点分布 (n={n_sim.value:,})", width=500, height=300)
+        .properties(
+            title=f"ハーフイニング得点分布 (n={n_sim.value:,})", width=500, height=300
+        )
     )
     mo.vstack([mo.md(f"平均得点: **{sim_df['runs'].mean():.3f}**"), chart])
     return ba, chart, outs, results, rng, runs, sim_df

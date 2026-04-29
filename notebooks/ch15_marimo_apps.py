@@ -7,6 +7,7 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
@@ -37,16 +38,21 @@ def _(mo):
 
 @app.cell
 def _():
-    import polars as pl
     import altair as alt
+    import polars as pl
+
     from baseball.data import load_lahman_batting
+
     return alt, load_lahman_batting, pl
 
 
 @app.cell
 def _(mo):
     year_range = mo.ui.range_slider(
-        start=1900, stop=2023, value=[2000, 2023], step=1,
+        start=1900,
+        stop=2023,
+        value=[2000, 2023],
+        step=1,
         label="対象年度",
     )
     stat_select = mo.ui.dropdown(
@@ -63,8 +69,9 @@ def _(alt, load_lahman_batting, mo, pl, stat_select, year_range):
     batting = load_lahman_batting()
     stat_col = stat_select.value
     season = (
-        batting
-        .filter(pl.col("yearID").is_between(year_range.value[0], year_range.value[1]))
+        batting.filter(
+            pl.col("yearID").is_between(year_range.value[0], year_range.value[1])
+        )
         .group_by("yearID")
         .agg(pl.col(stat_col).sum())
         .sort("yearID")
@@ -78,7 +85,8 @@ def _(alt, load_lahman_batting, mo, pl, stat_select, year_range):
         )
         .properties(
             title=f"MLB 年間{stat_select.label} ({year_range.value[0]}–{year_range.value[1]})",
-            width=600, height=350,
+            width=600,
+            height=350,
         )
     )
     mo.vstack([chart])

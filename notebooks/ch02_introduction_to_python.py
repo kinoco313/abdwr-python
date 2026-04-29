@@ -7,6 +7,7 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
@@ -38,8 +39,9 @@ def _(mo):
 
 @app.cell
 def _():
-    import polars as pl
     import altair as alt
+    import polars as pl
+
     return alt, pl
 
 
@@ -60,9 +62,9 @@ def _(pl):
 @app.cell
 def _(df, pl):
     # R: dplyr::mutate(df, z = x * y) |> dplyr::filter(z > 5)
-    result = df.with_columns(
-        (pl.col("x") * pl.col("y")).alias("z")
-    ).filter(pl.col("z") > 5)
+    result = df.with_columns((pl.col("x") * pl.col("y")).alias("z")).filter(
+        pl.col("z") > 5
+    )
     result
     return (result,)
 

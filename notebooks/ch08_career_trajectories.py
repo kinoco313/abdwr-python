@@ -7,6 +7,7 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
@@ -30,10 +31,12 @@ def _(mo):
 
 @app.cell
 def _():
-    import polars as pl
     import altair as alt
+    import polars as pl
     import statsmodels.formula.api as smf
+
     from baseball.data import load_lahman_batting
+
     return alt, load_lahman_batting, pl, smf
 
 
@@ -43,9 +46,7 @@ def _(load_lahman_batting, pl):
         load_lahman_batting()
         .filter(pl.col("AB") >= 100)
         .select(["playerID", "yearID", "age", "H", "AB"])
-        .with_columns(
-            (pl.col("H") / pl.col("AB")).alias("avg")
-        )
+        .with_columns((pl.col("H") / pl.col("AB")).alias("avg"))
     )
     batting.head()
     return (batting,)

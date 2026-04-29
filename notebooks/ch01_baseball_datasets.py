@@ -35,8 +35,9 @@ def _(mo):
 
 @app.cell
 def _():
-    import polars as pl
     import altair as alt
+    import polars as pl
+
     from baseball.data import (
         load_lahman_batting,
         load_statcast,
@@ -91,8 +92,7 @@ def _(batting, mo):
 @app.cell
 def _(batting, latest_year, mo):
     top_hr = (
-        batting
-        .filter(batting["yearID"] == latest_year)
+        batting.filter(batting["yearID"] == latest_year)
         .sort("HR", descending=True)
         .head(10)
         .select(["playerID", "teamID", "G", "AB", "H", "HR", "RBI", "BB", "SO"])
@@ -105,8 +105,7 @@ def _(batting, latest_year, mo):
 def _(alt, batting, pl):
     # シーズン総本塁打数の推移（1960年〜）
     hr_trend = (
-        batting
-        .filter(batting["yearID"] >= 1960)
+        batting.filter(batting["yearID"] >= 1960)
         .group_by("yearID")
         .agg(pl.col("HR").sum().alias("pl_HR"))
         .sort("yearID")
@@ -119,7 +118,9 @@ def _(alt, batting, pl):
             y=alt.Y("pl_HR:Q", title="総本塁打数"),
             tooltip=["yearID", "pl_HR"],
         )
-        .properties(title="MLB シーズン総本塁打数の推移（1960年〜）", width=640, height=300)
+        .properties(
+            title="MLB シーズン総本塁打数の推移（1960年〜）", width=640, height=300
+        )
     )
     chart_hr
     return
@@ -128,11 +129,10 @@ def _(alt, batting, pl):
 @app.cell
 def _(batting, latest_year, pl, qualifying_ab):
     batting_avg = (
-        batting
-        .filter((batting["yearID"] == latest_year) & (batting["AB"] >= qualifying_ab))
-        .with_columns(
-            (pl.col("H") / pl.col("AB")).alias("AVG")
+        batting.filter(
+            (batting["yearID"] == latest_year) & (batting["AB"] >= qualifying_ab)
         )
+        .with_columns((pl.col("H") / pl.col("AB")).alias("AVG"))
         .sort("AVG", descending=True)
         .head(10)
         .select(["playerID", "teamID", "AB", "H", "HR", "AVG"])
@@ -166,19 +166,29 @@ def _(mo):
 @app.cell
 def _(batting, latest_year, pl, qualifying_ab):
     ops_stats = (
-        batting
-        .filter((batting["yearID"] == latest_year) & (pl.col("AB") >= qualifying_ab))
-        .with_columns([
-            ((pl.col("H") + pl.col("BB") + pl.col("HBP").fill_null(0))
-             / (pl.col("AB") + pl.col("BB") + pl.col("HBP").fill_null(0) + pl.col("SF").fill_null(0)))
-            .alias("OBP"),
-            # SLG = Total Bases / AB
-            # H で全ヒットを1塁分計上済みなので追加塁数だけ足す
-            # (2B:+1, 3B:+2, HR:+3) ≡ 1B + 2×2B + 3×3B + 4×HR を展開した形
-            ((pl.col("H") + pl.col("2B") + 2 * pl.col("3B") + 3 * pl.col("HR"))
-             / pl.col("AB"))
-            .alias("SLG"),
-        ])
+        batting.filter(
+            (batting["yearID"] == latest_year) & (pl.col("AB") >= qualifying_ab)
+        )
+        .with_columns(
+            [
+                (
+                    (pl.col("H") + pl.col("BB") + pl.col("HBP").fill_null(0))
+                    / (
+                        pl.col("AB")
+                        + pl.col("BB")
+                        + pl.col("HBP").fill_null(0)
+                        + pl.col("SF").fill_null(0)
+                    )
+                ).alias("OBP"),
+                # SLG = Total Bases / AB
+                # H で全ヒットを1塁分計上済みなので追加塁数だけ足す
+                # (2B:+1, 3B:+2, HR:+3) ≡ 1B + 2×2B + 3×3B + 4×HR を展開した形
+                (
+                    (pl.col("H") + pl.col("2B") + 2 * pl.col("3B") + 3 * pl.col("HR"))
+                    / pl.col("AB")
+                ).alias("SLG"),
+            ]
+        )
         .with_columns((pl.col("OBP") + pl.col("SLG")).alias("OPS"))
         .sort("OPS", descending=True)
         .head(20)
@@ -197,7 +207,9 @@ def _(alt, ops_stats):
         .encode(
             x=alt.X("OBP:Q", title="出塁率 (OBP)", scale=alt.Scale(zero=False)),
             y=alt.Y("SLG:Q", title="長打率 (SLG)", scale=alt.Scale(zero=False)),
-            color=alt.Color("HR:Q", scale=alt.Scale(scheme="orangered"), title="本塁打"),
+            color=alt.Color(
+                "HR:Q", scale=alt.Scale(scheme="orangered"), title="本塁打"
+            ),
             tooltip=["playerID", "teamID", "OBP", "SLG", "OPS", "HR"],
         )
         .properties(title="出塁率 vs 長打率（規定打席以上）", width=520, height=360)
@@ -233,10 +245,17 @@ def _(mo):
 @app.cell
 def _(load_statcast):
     statcast = load_statcast("2023-07-04", "2023-07-04")
-    statcast.select([
-        "player_name", "pitch_type", "release_speed", "release_spin_rate",
-        "launch_speed", "launch_angle", "events",
-    ]).drop_nulls(subset=["pitch_type"]).head(20)
+    statcast.select(
+        [
+            "player_name",
+            "pitch_type",
+            "release_speed",
+            "release_spin_rate",
+            "launch_speed",
+            "launch_angle",
+            "events",
+        ]
+    ).drop_nulls(subset=["pitch_type"]).head(20)
     return (statcast,)
 
 
@@ -251,14 +270,9 @@ def _(mo, statcast):
 @app.cell
 def _(alt, pl, statcast):
     # 球種別 球速分布
-    sc_pitch = (
-        statcast
-        .filter(
-            pl.col("pitch_type").is_not_null()
-            & pl.col("release_speed").is_not_null()
-        )
-        .filter(pl.col("pitch_type").is_in(["FF", "SL", "CH", "CU", "SI", "FC"]))
-    )
+    sc_pitch = statcast.filter(
+        pl.col("pitch_type").is_not_null() & pl.col("release_speed").is_not_null()
+    ).filter(pl.col("pitch_type").is_in(["FF", "SL", "CH", "CU", "SI", "FC"]))
     chart_speed = (
         alt.Chart(sc_pitch.select(["pitch_type", "release_speed"]))
         .mark_boxplot()
@@ -277,8 +291,7 @@ def _(alt, pl, statcast):
 def _(alt, pl, statcast):
     # 打球: launch_speed vs launch_angle（本塁打のみ強調）
     hits = statcast.filter(
-        pl.col("launch_speed").is_not_null()
-        & pl.col("launch_angle").is_not_null()
+        pl.col("launch_speed").is_not_null() & pl.col("launch_angle").is_not_null()
     ).with_columns(
         pl.when(pl.col("events") == "home_run")
         .then(pl.lit("本塁打"))
@@ -286,15 +299,22 @@ def _(alt, pl, statcast):
         .alias("is_hr")
     )
     chart_la = (
-        alt.Chart(hits.select(["player_name", "events", "launch_speed", "launch_angle", "is_hr"]))
+        alt.Chart(
+            hits.select(
+                ["player_name", "events", "launch_speed", "launch_angle", "is_hr"]
+            )
+        )
         .mark_circle(opacity=0.5, size=30)
         .encode(
             x=alt.X("launch_speed:Q", title="打球初速 (mph)"),
             y=alt.Y("launch_angle:Q", title="打球角度 (°)"),
-            color=alt.Color("is_hr:N", scale=alt.Scale(
-                domain=["本塁打", "その他"],
-                range=["#e74c3c", "#aaa"],
-            )),
+            color=alt.Color(
+                "is_hr:N",
+                scale=alt.Scale(
+                    domain=["本塁打", "その他"],
+                    range=["#e74c3c", "#aaa"],
+                ),
+            ),
             tooltip=["player_name", "events", "launch_speed", "launch_angle"],
         )
         .properties(title="打球初速 vs 打球角度（2023-07-04）", width=580, height=350)

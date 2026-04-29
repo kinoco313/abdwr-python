@@ -7,6 +7,7 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
@@ -31,10 +32,12 @@ def _(mo):
 
 @app.cell
 def _():
-    import polars as pl
     import altair as alt
     import duckdb
+    import polars as pl
+
     from baseball.data import DATA_DIR
+
     return DATA_DIR, alt, duckdb, pl
 
 
@@ -64,7 +67,9 @@ def _(mo):
 
 @app.cell
 def _(mo):
-    mo.md("## TODO: 複数年 Statcast データを Polars LazyFrame + DuckDB で処理する例を実装")
+    mo.md(
+        "## TODO: 複数年 Statcast データを Polars LazyFrame + DuckDB で処理する例を実装"
+    )
     return
 
 

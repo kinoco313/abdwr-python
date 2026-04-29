@@ -7,6 +7,7 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
@@ -30,10 +31,11 @@ def _(mo):
 
 @app.cell
 def _():
-    import polars as pl
     import altair as alt
     import numpy as np
+    import polars as pl
     from scipy import stats
+
     return alt, np, pl, stats
 
 
@@ -55,7 +57,9 @@ def _(mo, np, pl):
         max_streaks.append(streak)
 
     streak_df = pl.DataFrame({"max_streak": max_streaks})
-    mo.md(f"平均最長連続安打: **{streak_df['max_streak'].mean():.1f}** 試合  |  中央値: **{streak_df['max_streak'].median():.0f}**")
+    mo.md(
+        f"平均最長連続安打: **{streak_df['max_streak'].mean():.1f}** 試合  |  中央値: **{streak_df['max_streak'].median():.0f}**"
+    )
     return ba, cur, h, hits, max_streaks, n_games, n_trials, rng, streak, streak_df
 
 
@@ -64,7 +68,9 @@ def _(alt, streak_df):
     alt.Chart(streak_df).mark_bar().encode(
         x=alt.X("max_streak:Q", bin=alt.Bin(step=1), title="最長連続安打数"),
         y=alt.Y("count()", title="頻度"),
-    ).properties(title="シーズン最長連続安打分布（シミュレーション）", width=500, height=300)
+    ).properties(
+        title="シーズン最長連続安打分布（シミュレーション）", width=500, height=300
+    )
     return
 
 

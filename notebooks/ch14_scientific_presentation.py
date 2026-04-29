@@ -7,6 +7,7 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
@@ -37,17 +38,21 @@ def _(mo):
 
 @app.cell
 def _():
-    import polars as pl
     import altair as alt
+    import polars as pl
+
     from baseball.data import load_lahman_teams
     from baseball.utils import pythagorean_expectation
+
     return alt, load_lahman_teams, pl, pythagorean_expectation
 
 
 @app.cell
 def _(mo):
     mo.callout(
-        mo.md("このノートブックは `marimo export html` でそのまま HTML レポートに変換できます。"),
+        mo.md(
+            "このノートブックは `marimo export html` でそのまま HTML レポートに変換できます。"
+        ),
         kind="info",
     )
     return
@@ -58,10 +63,12 @@ def _(load_lahman_teams, mo, pl, pythagorean_expectation):
     teams = (
         load_lahman_teams()
         .filter(pl.col("yearID") >= 2010)
-        .with_columns([
-            (pl.col("W") / (pl.col("W") + pl.col("L"))).alias("win_pct"),
-            pythagorean_expectation(pl.col("R"), pl.col("RA")).alias("pyth_pct"),
-        ])
+        .with_columns(
+            [
+                (pl.col("W") / (pl.col("W") + pl.col("L"))).alias("win_pct"),
+                pythagorean_expectation(pl.col("R"), pl.col("RA")).alias("pyth_pct"),
+            ]
+        )
         .select(["yearID", "teamID", "W", "L", "R", "RA", "win_pct", "pyth_pct"])
         .sort(["yearID", "teamID"])
     )

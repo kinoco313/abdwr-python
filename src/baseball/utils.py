@@ -30,9 +30,11 @@ def linear_weights(pbp: pl.DataFrame, events: list[str]) -> pl.DataFrame:
 
 
 def pythagorean_expectation(
-    runs_scored: pl.Series | pl.Expr, runs_allowed: pl.Series | pl.Expr, exp: float = 1.83
+    runs_scored: pl.Series | pl.Expr,
+    runs_allowed: pl.Series | pl.Expr,
+    exp: float = 1.83,
 ) -> pl.Series | pl.Expr:
     """Bill James Pythagorean Win Expectation."""
-    rs_exp = runs_scored ** exp
-    ra_exp = runs_allowed ** exp
+    rs_exp = runs_scored**exp
+    ra_exp = runs_allowed**exp
     return rs_exp / (rs_exp + ra_exp)
