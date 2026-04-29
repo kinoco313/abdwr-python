@@ -17,7 +17,7 @@ def _(mo):
         # Chapter 13: Home Run Hitting / ホームラン打撃分析
 
         **原著**: *Analyzing Baseball Data with R, 3rd ed.* Chapter 13
-        **原著URL**: https://beanumber.github.io/abdwr3e/ch13-home-runs.html
+        **原著URL**: https://beanumber.github.io/abdwr3e/13-homeruns.html
 
         ## 概要
         - Statcast の打球データ（`launch_speed` / `launch_angle`）

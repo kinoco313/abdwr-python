@@ -17,7 +17,7 @@ def _(mo):
         # Chapter 11: Park Factors / 球場補正係数
 
         **原著**: *Analyzing Baseball Data with R, 3rd ed.* Chapter 11
-        **原著URL**: https://beanumber.github.io/abdwr3e/ch11-park-factors.html
+        **原著URL**: https://beanumber.github.io/abdwr3e/11-sql.html
 
         ## 概要
         - DuckDB を使ったプレイバイプレイデータの SQL 集計

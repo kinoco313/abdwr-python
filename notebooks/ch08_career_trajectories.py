@@ -17,7 +17,7 @@ def _(mo):
         # Chapter 8: Career Trajectories / キャリア軌跡
 
         **原著**: *Analyzing Baseball Data with R, 3rd ed.* Chapter 8
-        **原著URL**: https://beanumber.github.io/abdwr3e/ch08-career-trajectories.html
+        **原著URL**: https://beanumber.github.io/abdwr3e/08-trajectories.html
 
         ## 概要
         - 年齢と成績の関係（Age Curve）

@@ -17,7 +17,7 @@ def _(mo):
         # Chapter 15: Interactive Apps with marimo / marimoインタラクティブアプリ
 
         **原著**: *Analyzing Baseball Data with R, 3rd ed.* Chapter 15 (Shiny)
-        **原著URL**: https://beanumber.github.io/abdwr3e/ch15-shiny.html
+        **原著URL**: https://beanumber.github.io/abdwr3e/15-shiny.html
 
         ## Shiny → marimo UI 対応表
 

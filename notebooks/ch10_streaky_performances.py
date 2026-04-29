@@ -17,7 +17,7 @@ def _(mo):
         # Chapter 10: Exploring Streaky Performances / 連続パフォーマンス分析
 
         **原著**: *Analyzing Baseball Data with R, 3rd ed.* Chapter 10
-        **原著URL**: https://beanumber.github.io/abdwr3e/ch10-streaky.html
+        **原著URL**: https://beanumber.github.io/abdwr3e/10-streak.html
 
         ## 概要
         - 連続安打・無安打の統計的検定

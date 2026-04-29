@@ -17,7 +17,7 @@ def _(mo):
         # Chapter 9: Simulation / シミュレーション
 
         **原著**: *Analyzing Baseball Data with R, 3rd ed.* Chapter 9
-        **原著URL**: https://beanumber.github.io/abdwr3e/ch09-simulation.html
+        **原著URL**: https://beanumber.github.io/abdwr3e/09-simulation.html
 
         ## 概要
         - モンテカルロシミュレーションによるゲーム結果予測

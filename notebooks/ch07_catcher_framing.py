@@ -17,7 +17,7 @@ def _(mo):
         # Chapter 7: Catcher Framing / キャッチャーフレーミング
 
         **原著**: *Analyzing Baseball Data with R, 3rd ed.* Chapter 7
-        **原著URL**: https://beanumber.github.io/abdwr3e/ch07-catcher-framing.html
+        **原著URL**: https://beanumber.github.io/abdwr3e/07-framing.html
 
         ## 概要
         キャッチャーのフレーミング（ボールをストライクに見せる）能力の定量化。

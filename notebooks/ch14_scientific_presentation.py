@@ -17,7 +17,7 @@ def _(mo):
         # Chapter 14: Scientific Presentation with marimo / marimoによるレポート作成
 
         **原著**: *Analyzing Baseball Data with R, 3rd ed.* Chapter 14 (Quarto)
-        **原著URL**: https://beanumber.github.io/abdwr3e/ch14-quarto.html
+        **原著URL**: https://beanumber.github.io/abdwr3e/14-quarto.html
 
         ## 概要
         原著では Quarto を使った科学的レポート作成を扱う。

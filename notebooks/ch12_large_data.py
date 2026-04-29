@@ -17,7 +17,7 @@ def _(mo):
         # Chapter 12: Working with Large Data / 大規模データ処理
 
         **原著**: *Analyzing Baseball Data with R, 3rd ed.* Chapter 12
-        **原著URL**: https://beanumber.github.io/abdwr3e/ch12-large-data.html
+        **原著URL**: https://beanumber.github.io/abdwr3e/12-large.html
 
         ## 概要
         - Polars による高速データ処理（lazy evaluation）

@@ -17,7 +17,7 @@ def _(mo):
         # Chapter 3: Graphics / データ可視化
 
         **原著**: *Analyzing Baseball Data with R, 3rd ed.* Chapter 3
-        **原著URL**: https://beanumber.github.io/abdwr3e/ch03-graphics.html
+        **原著URL**: https://beanumber.github.io/abdwr3e/03-graphics2.html
 
         ## ggplot2 → altair 対応表
 

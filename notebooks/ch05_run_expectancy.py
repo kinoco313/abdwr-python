@@ -17,7 +17,7 @@ def _(mo):
         # Chapter 5: Value of Plays Using Run Expectancy / 期待得点による打撃価値
 
         **原著**: *Analyzing Baseball Data with R, 3rd ed.* Chapter 5
-        **原著URL**: https://beanumber.github.io/abdwr3e/ch05-run-expectancy.html
+        **原著URL**: https://beanumber.github.io/abdwr3e/05-runsexpectancy.html
 
         ## 概要
         - 24状態（塁状況 × アウト数）の期待得点マトリックス

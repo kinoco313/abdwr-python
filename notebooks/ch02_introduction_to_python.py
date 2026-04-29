@@ -17,7 +17,7 @@ def _(mo):
         # Chapter 2: Introduction to Python / Python入門
 
         **原著**: *Analyzing Baseball Data with R, 3rd ed.* Chapter 2 (Introduction to R)
-        **原著URL**: https://beanumber.github.io/abdwr3e/ch02-intro-r.html
+        **原著URL**: https://beanumber.github.io/abdwr3e/02-intro.html
 
         ## R → Python / polars 対応表
 

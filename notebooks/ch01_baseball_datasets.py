@@ -18,7 +18,7 @@ def _(mo):
 
     **原著**: *Analyzing Baseball Data with R, 3rd ed.* Chapter 1
 
-    **原著URL**: https://beanumber.github.io/abdwr3e/ch01-bball.html
+    **原著URL**: https://beanumber.github.io/abdwr3e/01-datasets.html
 
     ## 概要
     野球データの主要ソースを紹介し、Python (pybaseball) で取得する方法を示す。

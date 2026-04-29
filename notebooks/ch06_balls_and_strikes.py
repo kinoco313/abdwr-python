@@ -17,7 +17,7 @@ def _(mo):
         # Chapter 6: Balls and Strikes Effects / ボール・ストライク効果
 
         **原著**: *Analyzing Baseball Data with R, 3rd ed.* Chapter 6
-        **原著URL**: https://beanumber.github.io/abdwr3e/ch06-balls-strikes.html
+        **原著URL**: https://beanumber.github.io/abdwr3e/06-pitchcount.html
 
         ## 概要
         - カウント別打者有利度の定量化
