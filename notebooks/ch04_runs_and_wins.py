@@ -390,10 +390,16 @@ def _(mo):
     mo.md(r"""
     ## 1勝に必要な得失点差 / How Many Runs for a Win?
 
-    ピタゴラス公式を得点 $R$ で偏微分すると、1勝を追加するのに必要な限界得点（IR/W: Incremental Runs per Win）が求まる。
+    「失点 $RA$ を固定したまま、得点 $RS$ をほんの少し増やしたとき、勝率はどれだけ上がるか」を計算すると、
+    1勝増やすのに必要な追加得点（IR/W: Incremental Runs per Win）が求まる。
+
+    数学的には $W\%$ を $RS$ で偏微分すると $\dfrac{dW\%}{dRS} = \dfrac{\Delta 勝率}{\Delta RS}$、
+    つまり「RSを1増やしたら勝率がいくつ上がるか」が得られる。
+    知りたいのはその逆、「勝率を1勝分上げるのにRSがいくつ必要か」＝ $\dfrac{\Delta RS}{\Delta 勝率}$ なので、逆数を取る。
+
     Ralph Caola（2003）の公式：
 
-    $$\frac{IR}{W} = \frac{(RS^2 + RA^2)^2}{2 \cdot RS \cdot RA^2}$$
+    $$\frac{IR}{W} = \frac{1}{dW\%/dRS} = \frac{(RS^2 + RA^2)^2}{2 \cdot RS \cdot RA^2}$$
 
     ここで $RS$, $RA$ は**1試合あたりの**得点・失点。
     """)
