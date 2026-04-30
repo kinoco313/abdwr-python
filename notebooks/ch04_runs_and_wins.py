@@ -284,19 +284,86 @@ def _(mo):
     mo.md(r"""
     ## ピタゴラス指数の最適化 / Finding the Optimal Pythagorean Exponent
 
-    Bill James が最初に提案した指数は **2** だったが、実際のデータに合う最適な指数は異なる。
+    Bill James のオリジナル式では指数を **2** に固定していたが、実際のデータにはより良い値がある。
 
-    W/L と R/RA の関係式を対数変換すると線形になる性質を使う：
+    ピタゴラス式を「勝数 ÷ 負数」の比の形で書き直すと：
 
-    $$\log\!\left(\frac{W}{L}\right) \approx k \cdot \log\!\left(\frac{R}{RA}\right)$$
+    $$\frac{W}{L} = \left(\frac{RS}{RA}\right)^k$$
 
-    切片なしの線形回帰で $k$ を推定する。
+    - $RS/RA > 1$（得点 > 失点）なら $W/L > 1$（勝ち越し）という直感に合う形
+    - $k$ の値によって曲線の急さが変わる
+
+    これは **べき乗則（power law）** と呼ばれる形で、曲線の関係になる。
+    まず、対数変換をする前の散布図でこの曲線関係を確認する。
     """)
     return
 
 
 @app.cell
-def _(mo, np, pl, teams):
+def _(alt, pl, teams):
+    teams_ratio = teams.filter(
+        (pl.col("W") > 0) & (pl.col("L") > 0) & (pl.col("R") > 0) & (pl.col("RA") > 0)
+    ).with_columns(
+        [
+            (pl.col("W") / pl.col("L")).alias("w_ratio"),
+            (pl.col("R") / pl.col("RA")).alias("r_ratio"),
+        ]
+    )
+
+    base_ratio = (
+        alt.Chart(teams_ratio)
+        .mark_point(opacity=0.2, size=15, color="steelblue")
+        .encode(
+            x=alt.X("r_ratio:Q", title="R/RA（得点 ÷ 失点）"),
+            y=alt.Y("w_ratio:Q", title="W/L（勝数 ÷ 負数）"),
+            tooltip=["yearID:Q", "teamID:N", "r_ratio:Q", "w_ratio:Q"],
+        )
+    )
+
+    curve_fit = base_ratio.transform_regression(
+        "r_ratio", "w_ratio", method="pow"
+    ).mark_line(color="red", strokeWidth=2)
+
+    (base_ratio + curve_fit).properties(
+        title="W/L vs R/RA（対数変換前）― べき乗の曲線関係",
+        width=500,
+        height=400,
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ### なぜ対数変換するのか？― 曲線を直線に変える定番テクニック
+
+    散布図を見ると、$RS/RA$ が増えるにつれて $W/L$ が **曲線的に増加** している。
+    曲線のままでは「傾き = $k$」という形の線形回帰を使えない。
+
+    ここで使うのが **対数変換（log transformation）** だ。
+
+    べき乗の関係：
+    $$y = x^k$$
+
+    両辺に自然対数 $\log$ を取ると：
+    $$\log(y) = k \cdot \log(x)$$
+
+    **曲線 → 原点を通る直線** に変わる。傾きがそのまま $k$ になるので、線形回帰で一気に推定できる。
+
+    このテクニックは **log-log 変換** と呼ばれ、物理・生物・経済学など広い分野で使われる定番手法。
+    「両軸を対数スケールにすると直線になる」ものはべき乗則の関係だと分かるサインでもある。
+
+    今回の式に当てはめると：
+
+    $$\log\!\left(\frac{W}{L}\right) = k \cdot \log\!\left(\frac{RS}{RA}\right)$$
+
+    横軸を $\log(RS/RA)$、縦軸を $\log(W/L)$ に変換して、散布図を確認してみよう。
+    """)
+    return
+
+
+@app.cell
+def _(pl, teams):
     teams_log = teams.filter(
         (pl.col("W") > 0) & (pl.col("L") > 0) & (pl.col("R") > 0) & (pl.col("RA") > 0)
     ).with_columns(
@@ -305,7 +372,35 @@ def _(mo, np, pl, teams):
             (pl.col("R") / pl.col("RA")).log().alias("log_r_ratio"),
         ]
     )
+    return (teams_log,)
 
+
+@app.cell
+def _(alt, teams_log):
+    base_log = (
+        alt.Chart(teams_log)
+        .mark_point(opacity=0.2, size=15, color="steelblue")
+        .encode(
+            x=alt.X("log_r_ratio:Q", title="log(R/RA)"),
+            y=alt.Y("log_w_ratio:Q", title="log(W/L)"),
+            tooltip=["yearID:Q", "teamID:N", "log_r_ratio:Q", "log_w_ratio:Q"],
+        )
+    )
+
+    line_fit = base_log.transform_regression(
+        "log_r_ratio", "log_w_ratio", method="linear"
+    ).mark_line(color="red", strokeWidth=2)
+
+    (base_log + line_fit).properties(
+        title="log(W/L) vs log(R/RA)（対数変換後）― きれいな直線に",
+        width=500,
+        height=400,
+    )
+    return
+
+
+@app.cell
+def _(mo, np, teams_log):
     log_r = teams_log["log_r_ratio"].to_numpy()
     log_w = teams_log["log_w_ratio"].to_numpy()
     # 切片なし線形回帰: k = Σ(x*y) / Σ(x²)
