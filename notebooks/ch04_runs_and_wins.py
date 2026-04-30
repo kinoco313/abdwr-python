@@ -22,7 +22,7 @@ def _(mo):
 
     ## この章でできること
 
-    - 得点（RS）と失点（RA）だけからチームの勝率を予測する **ピタゴラス勝率** を計算できる
+    - 得点（R）と失点（RA）だけからチームの勝率を予測する **ピタゴラス勝率** を計算できる
     - 得失点差と勝率の間に強い線形関係があることを、散布図と回帰直線で確認できる
     - **単回帰モデル** を使って「何点の得失点差で1勝が増えるか」を推定できる
     - 残差（予測との誤差）を分析して、"勝負強さ"や"運"で勝ちすぎたチームを特定できる
@@ -34,12 +34,12 @@ def _(mo):
 
     | 略語 | 正式名称 | 意味 |
     |------|----------|------|
-    | RS | Runs Scored | 得点 |
+    | R | Runs Scored | 得点 |
     | RA | Runs Allowed | 失点 |
-    | RD | Run Differential | 得失点差（RS − RA） |
+    | RD | Run Differential | 得失点差（R − RA） |
     | Wpct | Winning Percentage | 勝率 |
 
-    $$W\% = \frac{RS^{1.83}}{RS^{1.83} + RA^{1.83}}$$
+    $$W\% = \frac{R^{1.83}}{R^{1.83} + RA^{1.83}}$$
     """)
     return
 
@@ -172,7 +172,7 @@ def _(mo):
     mo.md(r"""
     ## 得失点差と勝率の線形回帰 / Linear Regression: Run Differential → Win Pct
 
-    得失点差（RD: Run Differential = RS − RA）と勝率（win_pct）の間には強い線形関係がある。
+    得失点差（RD: Run Differential = R − RA）と勝率（win_pct）の間には強い線形関係がある。
 
     係数から「何得失点差で勝率が 1/162 上がるか（= 1勝増えるか）」を推定できる。
     """)
@@ -187,7 +187,7 @@ def _(alt, pl, teams):
         alt.Chart(teams_rd)
         .mark_point(opacity=0.3, size=20)
         .encode(
-            x=alt.X("run_diff:Q", title="得失点差 (RS − RA)"),
+            x=alt.X("run_diff:Q", title="得失点差 (R − RA)"),
             y=alt.Y("win_pct:Q", title="勝率"),
             tooltip=["yearID:Q", "teamID:N", "win_pct:Q", "run_diff:Q"],
         )
@@ -288,9 +288,9 @@ def _(mo):
 
     ピタゴラス式を「勝数 ÷ 負数」の比の形で書き直すと：
 
-    $$\frac{W}{L} = \left(\frac{RS}{RA}\right)^k$$
+    $$\frac{W}{L} = \left(\frac{R}{RA}\right)^k$$
 
-    - $RS/RA > 1$（得点 > 失点）なら $W/L > 1$（勝ち越し）という直感に合う形
+    - $R/RA > 1$（得点 > 失点）なら $W/L > 1$（勝ち越し）という直感に合う形
     - $k$ の値によって曲線の急さが変わる
 
     これは **べき乗則（power law）** と呼ばれる形で、曲線の関係になる。
@@ -337,7 +337,7 @@ def _(mo):
     mo.md(r"""
     ### なぜ対数変換するのか？― 曲線を直線に変える定番テクニック
 
-    散布図を見ると、$RS/RA$ が増えるにつれて $W/L$ が **曲線的に増加** している。
+    散布図を見ると、$R/RA$ が増えるにつれて $W/L$ が **曲線的に増加** している。
     曲線のままでは「傾き = $k$」という形の線形回帰を使えない。
 
     ここで使うのが **対数変換（log transformation）** だ。
@@ -355,9 +355,9 @@ def _(mo):
 
     今回の式に当てはめると：
 
-    $$\log\!\left(\frac{W}{L}\right) = k \cdot \log\!\left(\frac{RS}{RA}\right)$$
+    $$\log\!\left(\frac{W}{L}\right) = k \cdot \log\!\left(\frac{R}{RA}\right)$$
 
-    横軸を $\log(RS/RA)$、縦軸を $\log(W/L)$ に変換して、散布図を確認してみよう。
+    横軸を $\log(R/RA)$、縦軸を $\log(W/L)$ に変換して、散布図を確認してみよう。
     """)
     return
 
@@ -457,22 +457,28 @@ def _(intercept, k_opt, mo, np, pl, pythagorean_expectation, slope, teams_rd):
     def rmse(col: str) -> float:
         return float(np.sqrt(teams_cmp[col].pow(2).mean()))
 
+    def within_rmse(col: str, value: float, multiplier: float = 1.0) -> float:
+        return int((teams_cmp[col].abs() < multiplier * value).sum()) / len(teams_cmp)
+
     rmse_linear = rmse("resid_linear")
     rmse_pyth2 = rmse("resid_pyth2")
     rmse_opt = rmse("resid_pyth_opt")
 
-    n = len(teams_cmp)
-    within1_linear = int((teams_cmp["resid_linear"].abs() < rmse_linear).sum())
-    within2_linear = int((teams_cmp["resid_linear"].abs() < 2 * rmse_linear).sum())
+    within1_linear = within_rmse("resid_linear", rmse_linear)
+    within2_linear = within_rmse("resid_linear", rmse_linear, 2)
+    within1_pyth2 = within_rmse("resid_pyth2", rmse_pyth2)
+    within2_pyth2 = within_rmse("resid_pyth2", rmse_pyth2, 2)
+    within1_opt = within_rmse("resid_pyth_opt", rmse_opt)
+    within2_opt = within_rmse("resid_pyth_opt", rmse_opt, 2)
 
     mo.md(f"""
     ### RMSE 比較
 
     | モデル | RMSE | ±1×RMSE 以内 | ±2×RMSE 以内 |
     |--------|------|-------------|-------------|
-    | 線形回帰（RD → Wpct） | {rmse_linear:.4f} | {within1_linear / n:.1%} | {within2_linear / n:.1%} |
-    | ピタゴラス（k=2.00） | {rmse_pyth2:.4f} | — | — |
-    | ピタゴラス（k={k_opt:.2f}） | {rmse_opt:.4f} | — | — |
+    | 線形回帰（RD → Wpct） | {rmse_linear:.4f} | {within1_linear:.1%} | {within2_linear:.1%} |
+    | ピタゴラス（k=2.00） | {rmse_pyth2:.4f} | {within1_pyth2:.1%} | {within2_pyth2:.1%} |
+    | ピタゴラス（k={k_opt:.2f}） | {rmse_opt:.4f} | {within1_opt:.1%} | {within2_opt:.1%} |
 
     → 精度はほぼ同等。しかしピタゴラスモデルは **勝率が必ず 0〜1 に収まる** という
     理論的に望ましい性質があるため、実用上はピタゴラスが好まれる。
@@ -485,18 +491,18 @@ def _(mo):
     mo.md(r"""
     ## 1勝に必要な得失点差 / How Many Runs for a Win?
 
-    「失点 $RA$ を固定したまま、得点 $RS$ をほんの少し増やしたとき、勝率はどれだけ上がるか」を計算すると、
+    「失点 $RA$ を固定したまま、得点 $R$ をほんの少し増やしたとき、勝率はどれだけ上がるか」を計算すると、
     1勝増やすのに必要な追加得点（IR/W: Incremental Runs per Win）が求まる。
 
-    数学的には $W\%$ を $RS$ で偏微分すると $\dfrac{dW\%}{dRS} = \dfrac{\Delta 勝率}{\Delta RS}$、
-    つまり「RSを1増やしたら勝率がいくつ上がるか」が得られる。
-    知りたいのはその逆、「勝率を1勝分上げるのにRSがいくつ必要か」＝ $\dfrac{\Delta RS}{\Delta 勝率}$ なので、逆数を取る。
+    数学的には $W\%$ を $R$ で偏微分すると $\dfrac{dW\%}{dR} = \dfrac{\Delta 勝率}{\Delta R}$、
+    つまり「Rを1増やしたら勝率がいくつ上がるか」が得られる。
+    知りたいのはその逆、「勝率を1勝分上げるのにRがいくつ必要か」＝ $\dfrac{\Delta R}{\Delta 勝率}$ なので、逆数を取る。
 
     Ralph Caola（2003）の公式：
 
-    $$\frac{IR}{W} = \frac{1}{dW\%/dRS} = \frac{(RS^2 + RA^2)^2}{2 \cdot RS \cdot RA^2}$$
+    $$\frac{IR}{W} = \frac{1}{dW\%/dR} = \frac{(R^2 + RA^2)^2}{2 \cdot R \cdot RA^2}$$
 
-    ここで $RS$, $RA$ は**1試合あたりの**得点・失点。
+    ここで $R$, $RA$ は**1試合あたりの**得点・失点。
     """)
     return
 
@@ -511,7 +517,7 @@ def _(mo, np, pl):
 
     ir_table = pl.DataFrame(
         [
-            {"RS/G": rs, "RA/G": ra, "IR/W": round(ir_per_win(rs, ra), 1)}
+            {"R/G": rs, "RA/G": ra, "IR/W": round(ir_per_win(rs, ra), 1)}
             for rs in rs_vals
             for ra in ra_vals
         ]
@@ -520,27 +526,27 @@ def _(mo, np, pl):
     mo.vstack(
         [
             mo.md(r"""
-        ### 1勝に必要な得失点差（試合あたり RS/RA 別）
+        ### 1勝に必要な得失点差（試合あたり R/RA 別）
 
-        現代 MLB の平均的な得点環境（RS ≈ RA ≈ 4.5〜5.0）では、
+        現代 MLB の平均的な得点環境（R ≈ RA ≈ 4.5〜5.0）では、
         約 **10 得失点差** で 1 勝増える（「10点ルール」の理論的根拠）。
 
-        **直感に反する点**: RS/G が低いチーム（得点力が低いチーム）ほど IR/W が小さくなる。
+        **直感に反する点**: R/G が低いチーム（得点力が低いチーム）ほど IR/W が小さくなる。
         つまり「得点力が低いチームほど、少ない追加得点で1勝増やせる」。
 
-        これはピタゴラス勝率の式 $W\% = RS^2 / (RS^2 + RA^2)$ の性質によるもので、
-        RS が大きくなるほど「1点追加したときの勝率の上がり幅」が小さくなる。
+        これはピタゴラス勝率の式 $W\% = R^2 / (R^2 + RA^2)$ の性質によるもので、
+        R が大きくなるほど「1点追加したときの勝率の上がり幅」が小さくなる。
 
         RA=5.0 で固定した場合の例：
 
-        | RS/G | ピタゴラス勝率 | RS/G を +0.5 したときの勝率増加 |
+        | R/G | ピタゴラス勝率 | R/G を +0.5 したときの勝率増加 |
         |------|--------------|-------------------------------|
         | 4.5 | 44.8% | +5.2pt（4.5 → 5.0）|
         | 5.0 | 50.0% | +4.8pt（5.0 → 5.5）|
         | 5.5 | 54.8% | +4.4pt（5.5 → 6.0）|
 
-        RS/G が低い領域では同じ得点上乗せでも勝率が大きく上がる。
-        RS/G が高くなるにつれてその上がり幅が小さくなるため、1勝に必要な追加点（IR/W）が増える。
+        R/G が低い領域では同じ得点上乗せでも勝率が大きく上がる。
+        R/G が高くなるにつれてその上がり幅が小さくなるため、1勝に必要な追加点（IR/W）が増える。
         """),
             ir_table,
         ]
